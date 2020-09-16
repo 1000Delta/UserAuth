@@ -1,0 +1,118 @@
+openapi: "3.0.2"
+info:
+  title: 用户鉴权系统 API
+  version: "1.0"
+servers:
+  - url: https://api.server.test/v1
+
+tags:
+  - name: user
+    description: 用户管理
+  - name: auth
+    description: 鉴权
+
+paths:
+  /user/login:
+    post:
+      summary: 用户登录
+      tags:
+        - "user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  description: 用户名
+                  type: string
+                password:
+                  description: 密码
+                  type: string
+            example:
+              username: "sky31"
+              password: "123456"
+      responses:
+        200:
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 返回对象
+                properties:
+                  token:
+                    description: 令牌
+                    type: string
+        404:
+          $ref: "#/components/responses/ErrNotFound"
+  /user/logout:
+    post:
+      summary: 用户注销
+      tags:
+        - "user"
+      requestBody:
+        $ref: "#/components/requestBodies/AuthBody"
+      responses:
+        200:
+          $ref: "#/components/responses/OK"
+        # 应该不需要报错
+
+  /auth/{AUTH}:
+    get:
+      summary: 鉴权
+      tags:
+        - "auth"
+      parameters:
+        - in: path
+          name: Auth
+          required: true
+          description: 鉴权项，在鉴权系统中有记录的权限
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/AuthBody"
+      responses:
+        200:
+          description: 鉴权成功
+          $ref: "#/components/responses/OK"
+        401:
+          description: 鉴权失败，用户令牌过期
+          $ref: "#/components/responses/ErrNotAuthorization"
+        403:
+          description: 鉴权失败，没有权限
+          $ref: "#/components/responses/ErrForbidden"
+        404:
+          description: 没有记录，需要检查是否存在此用户/权限
+          $ref: "#/components/responses/ErrNotFound"
+
+components:
+  schemas:
+    AuthToken:
+      description: 鉴权令牌
+      type: object
+      properties:
+        token:
+          type: string
+      example:
+        token: "还没确定格式"
+  requestBodies:
+    AuthBody:
+      description: 鉴权请求体
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AuthToken"
+  responses:
+    # 200
+    OK:
+      description: 成功
+    # 401
+    ErrNotAuthorization:
+      description: 未登录
+    # 403
+    ErrForbidden:
+      description: 没有权限
+    # 404
+    ErrNotFound:
+      description: 结果不存在
