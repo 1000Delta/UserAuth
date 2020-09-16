@@ -12,6 +12,35 @@ tags:
     description: 鉴权
 
 paths:
+  /user/register:
+    post:
+      summary: 注册用户
+      tags:
+        - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  description: 用户名
+                  type: string
+                password:
+                  description: 密码
+                  type: string
+                nickname:
+                  description: 昵称
+                  type: string
+              example:
+                username: "sky31"
+                password: "123456"
+                nickname: "昵称"
+      responses:
+        200:
+          $ref: "#/components/responses/OK"
+        400:
+          $ref: "#/components/responses/ErrBadRequest"
   /user/login:
     post:
       summary: 用户登录
@@ -107,6 +136,9 @@ components:
     # 200
     OK:
       description: 成功
+    # 400
+    ErrBadRequest:
+      description: 请求失败
     # 401
     ErrNotAuthorization:
       description: 未登录
