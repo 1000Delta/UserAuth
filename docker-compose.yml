@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  app:
+    container_name: user_auth_app
+    image: ubuntu
+    networks:
+      - user_auth
+    ports:
+      - 8080:8080
+    volumes:
+      - ./UserAuth:/UserAuth
+      - ./config.toml:/config.toml
+    depends_on:
+      - mysql
+    command: /UserAuth
+  mysql:
+    container_name: user_auth_mysql
+    image: mysql:5.7
+    networks:
+      - user_auth
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: user_auth
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  user_auth:

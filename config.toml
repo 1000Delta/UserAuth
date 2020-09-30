@@ -1,0 +1,4 @@
+listen = ":8080"
+database = "root:root@tcp(mysql_host:3306)/user_auth?charset=utf8mb4&parseTime=True&loc=Local"
+# database = "root:root@tcp(user_auth_mysql:3306)/user_auth?charset=utf8mb4&parseTime=True&loc=Local"
+mode = "debug"
